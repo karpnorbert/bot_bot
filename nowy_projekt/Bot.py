@@ -3,6 +3,7 @@ import pandas as pd
 from telegram import Update
 from telegram.ext import Updater, MessageHandler, Filters, CallbackContext
 
+
 # Funkcja obsługująca nowe wiadomości
 def handle_message(update: Update, context: CallbackContext):
     message = update.effective_message
@@ -27,9 +28,9 @@ def handle_message(update: Update, context: CallbackContext):
 
     for part in parts[3:]:
         if '↓↓↓' in part:
-            if 'home:' in part:
+            if 'home' in part:
                 trend = "↓↓↓ (home)"
-            elif 'away:' in part:
+            elif 'away' in part:
                 trend = "↓↓↓ (away)"
             dropping_line = part.split(':')[1].strip()
             break
@@ -42,7 +43,7 @@ def handle_message(update: Update, context: CallbackContext):
 
     # Oblicz różnicę procentową
     try:
-        dropping_line = float(dropping_line)
+        dropping_line = float(dropping_line.replace(",", "."))
         previous_dropping_line = pd.read_excel('raport.xlsx')['Dropping Line'].iloc[-1]
         percentage_change = (dropping_line - previous_dropping_line) / previous_dropping_line * 100
     except (FileNotFoundError, IndexError, ValueError):
@@ -64,6 +65,7 @@ def handle_message(update: Update, context: CallbackContext):
 
     print("Raport zapisany")
 
+
 # Konfiguracja i uruchomienie bota
 def main():
     # Ustawienia bota
@@ -78,6 +80,7 @@ def main():
     # Uruchomienie bota
     updater.start_polling()
     updater.idle()
+
 
 if __name__ == '__main__':
     main()
